@@ -1,0 +1,10 @@
+workflow
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1. register
+2. login
+3. upload photo (with caption?) to:
+    a. twitter
+    b. storage
+4. redirect to success page
+    a. show (loop through) links to view photo tweets
+    b. show link to photo uploads
