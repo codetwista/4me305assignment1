@@ -19,7 +19,7 @@ class UserController extends BaseController
             $user = $this->userModel->find($this->session->id);
         }
         
-        return view('welcome', [
+        return view('profile', [
             'title' => 'User profile',
             'user' => $user,
             'photos' => $this->photoModel->findAll(),
@@ -33,7 +33,7 @@ class UserController extends BaseController
     public function register()
     {
         // Check for active user session
-        if ($this->session->has('isLoggedIn'))  return redirect()->to(base_url('welcome'));
+        if ($this->session->has('isLoggedIn'))  return redirect()->to(base_url('profile'));
         
         if ($this->request->is('post')) {
             $data = [
@@ -71,7 +71,7 @@ class UserController extends BaseController
     public function login()
     {
         // Check for active user session
-        if ($this->session->has('isLoggedIn')) return redirect()->to(base_url('welcome'));
+        if ($this->session->has('isLoggedIn')) return redirect()->to(base_url('profile'));
         
         $data['errors'] = '';
         
@@ -112,7 +112,7 @@ class UserController extends BaseController
                         ]);
                 
                         // Redirect to user page
-                        return redirect()->to(base_url('welcome'))->with('notice', '
+                        return redirect()->to(base_url('profile'))->with('notice', '
                             <div class="ui success message">
                                 <i class="close icon"></i>
                                 <div class="header">

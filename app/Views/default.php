@@ -30,7 +30,7 @@
                     <?php if (session()->has('isLoggedIn')): ?>
 
                     <?php if (current_url() !== base_url('welcome')): ?>
-                    <a class="item" href="<?= base_url('welcome') ?>">Profile</a>
+                    <a class="item" href="<?= base_url('profile') ?>">Profile</a>
                     <?php endif; ?>
 
                     <a class="item" href="<?= base_url('upload') ?>">
