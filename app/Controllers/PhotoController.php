@@ -16,7 +16,7 @@ class PhotoController extends BaseController
         
         return view('photos', [
             'title' => 'Photos',
-            'photos' => $this->photoModel->findAll(),
+            'photos' => $this->photoModel->where('user_id', $this->session->id)->findAll(),
             'errors' => []
         ]);
     }
@@ -76,7 +76,7 @@ class PhotoController extends BaseController
                             <div class="header">
                                 Photo uploaded successfully!
                             </div>
-                            <p> <a href="' . base_url('photos') . '">View photo</a></p>
+                            <p> <a href="' . base_url('twitter/login') . '">View photo</a></p>
                         </div>'
                     );
                 }

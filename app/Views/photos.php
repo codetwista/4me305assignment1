@@ -37,12 +37,18 @@
             </div>
             <div class="content caption">
                 <p class="caption"><?= $photo->caption ?></p>
+                <?php if (session()->has('oauthToken')): ?>
+
                 <div class="ui divider"></div>
-                <?= form_open('tweet', 'class="ui form"') ?>
+                <?= form_open_multipart('tweet', 'class="ui form"') ?>
                 <?= form_hidden('caption', $photo->caption) ?>
                 <?= form_hidden('photo', $photo->url) ?>
+
                 <button class="ui primary button" type="submit">Tweet photo</button>
                 <?= form_close() ?>
+
+                <?php endif ?>
+
             </div>
         </div>
     </div>

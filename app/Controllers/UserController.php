@@ -3,11 +3,13 @@
 namespace App\Controllers;
 
 
+use CodeIgniter\HTTP\RedirectResponse;
+
 class UserController extends BaseController
 {
     /**
      * User profile
-     * @return \CodeIgniter\HTTP\RedirectResponse|string
+     * @return RedirectResponse|string
      */
     public function index()
     {
@@ -22,13 +24,13 @@ class UserController extends BaseController
         return view('profile', [
             'title' => 'User profile',
             'user' => $user,
-            'photos' => $this->photoModel->findAll(),
+            'photos' => $this->photoModel->where('user_id', $this->session->id)->findAll(),
         ]);
     }
     
     /**
      * Register user account
-     * @return \CodeIgniter\HTTP\RedirectResponse|string
+     * @return RedirectResponse|string
      */
     public function register()
     {
@@ -99,7 +101,7 @@ class UserController extends BaseController
     
             if ($this->validateData($data, $rules)) {
                 // Check that user email exists in the database
-                if ($user = $this->userModel->where(['email_address' => $data['email_address']])->first()) {
+                if ($user = $this->userModel->where('email_address', $data['email_address'])->first()) {
                     // Compare password with hashed password
                     if (password_verify($data['password'], $user->password)) {
                         // Set session
@@ -162,7 +164,7 @@ class UserController extends BaseController
 
     /**
      * Logout
-     * @return \CodeIgniter\HTTP\RedirectResponse
+     * @return RedirectResponse
      */
     public function logout()
     {

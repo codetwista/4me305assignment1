@@ -5,6 +5,8 @@ namespace App\Controllers;
 require APPPATH . '../vendor/autoload.php';
 
 use Abraham\TwitterOAuth\TwitterOAuth;
+use Abraham\TwitterOAuth\TwitterOAuthException;
+use CodeIgniter\HTTP\RedirectResponse;
 
 class TwitterAuth extends BaseController
 {
@@ -24,7 +26,7 @@ class TwitterAuth extends BaseController
 
     /**
      * Authentication
-     * @return \CodeIgniter\HTTP\RedirectResponse|false
+     * @return RedirectResponse|false
      * @throws \Abraham\TwitterOAuth\TwitterOAuthException
      */
     public function index()
@@ -51,19 +53,14 @@ class TwitterAuth extends BaseController
         $accessToken = $connection->oauth("oauth/access_token", [
             "oauth_verifier" => $this->request->getVar('oauth_verifier')
         ]);
-    
+
         $this->session->set('accessToken', $accessToken);
-    
+
         $twitterAccessToken = $this->session->accessToken;
-    
-        $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $twitterAccessToken['oauth_token'],
-            $twitterAccessToken['oauth_token_secret']);
-    
-        $twitterProfile = $connection->get('account/verify_credentials', [
-            'tweet_mode' => 'extended', 'include_entities' => 'true'
-        ]);
-    
-        if ($user = $this->userModel->where('screen_name', $twitterProfile->screen_name)->first()) {
+
+        $user = $this->userModel->where('screen_name', $twitterAccessToken['screen_name'])->first();
+
+        if ($user) {
             // Save user to session
             $this->session->set([
                 'userID' => $user->id,
@@ -71,33 +68,16 @@ class TwitterAuth extends BaseController
                 'email_address' => $user->email_address
             ]);
 
-            $connection->setTimeouts(30, 60);
-
-            /*
-            // $photo = $connection->upload('media/upload', ['media' => FCPATH . 'uploads/1675799051.jpg']);
-            $photo = $connection->upload('media/upload', ['media' => FCPATH . 'uploads/1685767735.jpg']);
-
-            $parameters = [
-                'status' => 'Meow Meow Meow',
-                'media_ids' => $photo->media_id_string
-            ];
-            $result = $connection->post('statuses/update', $parameters);
-            $resArray = json_decode(json_encode($result), true);
-            print_r($resArray);
-            print_r($resArray["entities"]["media"][0]["url"]);
-            echo $result;
-            */
-
              // Redirect user to upload page
              return redirect()->to(base_url('photos'));
         }
-    
+
         return false;
     }
 
     /**
      * Login
-     * @return \CodeIgniter\HTTP\RedirectResponse|false
+     * @return RedirectResponse|false
      * @throws \Abraham\TwitterOAuth\TwitterOAuthException
      */
     public function login()
@@ -132,7 +112,8 @@ class TwitterAuth extends BaseController
 
     /**
      * Tweet photo
-     * @return \CodeIgniter\HTTP\RedirectResponse|void
+     * @return RedirectResponse|void
+     * @throws TwitterOAuthException
      */
     public function tweet()
     {
@@ -146,20 +127,30 @@ class TwitterAuth extends BaseController
             $connection = new TwitterOAuth($this->consumerKey, $this->consumerSecret, $twitterAccessToken['oauth_token'],
                 $twitterAccessToken['oauth_token_secret']);
 
+            $connection->setApiVersion('1.1');
+
             // $connection->setTimeouts(30, 60);
 
             $pic = $connection->upload('media/upload', ['media' => FCPATH . 'uploads/' . $photo]);
 
+            /*$parameters['text'] = $caption;
+            $parameters['media']['media_ids'][0] = $pic->media_id_string;*/
+
             $parameters = [
-                'status' => $caption,
-                'media_ids' => $pic->media_id_string
+                'text' => $caption,
+                'media' => [
+                    'media_ids' => [$pic->media_id_string],
+                ]
             ];
 
+            $connection->setApiVersion('2');
+
             // Tweet photo
-            $connection->post('statuses/update', $parameters);
+            $connection->post('tweets', $parameters);
 
             // Return to photo gallery with success notification
-            return redirect()->back()->with('notice', 'Your photo (' . $caption . ') tweet was successful!');
+            return redirect()->back()->with('notice', 'Your photo (' . $caption . ') was tweeted successfully!
+                <br><a href="https://twitter.com/' . $twitterAccessToken["screen_name"] . '" target="_blank">View tweet</a>');
         }
     }
 }

@@ -31,3 +31,10 @@ a.ui.button {
 label {
   font-size: 16px !important;
 }
+.image {
+  height: 16rem;
+  overflow: hidden;
+}
+.image img {
+  display: block;
+}
