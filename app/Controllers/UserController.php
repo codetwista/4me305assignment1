@@ -110,6 +110,7 @@ class UserController extends BaseController
                             'first_name' => $user->first_name,
                             'last_name' => $user->last_name,
                             'email_address' => $user->email_address,
+                            'screen_name' => $user->screen_name,
                             'isLoggedIn' => TRUE
                         ]);
                 
@@ -169,7 +170,9 @@ class UserController extends BaseController
     public function logout()
     {
         $this->session->destroy();
-    
+        $this->session->remove('oauthToken');
+        $this->session->remove('screen_name');
+
         return redirect()->to(base_url('login'));
     }
 }

@@ -34,12 +34,23 @@
                     <?php endif; ?>
 
                     <a class="item" href="<?= base_url('upload') ?>">
-                        Upload photo
+                        Upload photos
                     </a>
-                    
+                    <?php if (session()->has('oauthToken')): ?>
+
+                    <?php if (current_url() !== base_url('photos')): ?>
+
+                    <a class="item" href="<?= base_url('photos') ?>">
+                        View photos
+                    </a>
+                    <?php endif ?>
+
+                    <?php else: ?>
+
                     <a class="item" href="<?= base_url('twitter/login') ?>">
-                        Tweet photo
+                        Tweet photos
                     </a>
+                    <?php endif ?>
                     
                     <a class="ui item" href="<?= base_url('logout') ?>">
                         Logout
@@ -66,7 +77,6 @@
                         Register
                     </a>
                     <?php endif ?>
-
                     
                     <?php endif ?>
                     

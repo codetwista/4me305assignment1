@@ -30,20 +30,15 @@
             </thead>
             <tbody>
             <tr>
-                <td data-label="First name"><?= ucfirst($user->first_name) ?></td>
-                <td data-label="Last name"><?= ucfirst($user->last_name) ?></td>
-                <td data-label="Email"><?= strtolower($user->email_address) ?></td>
-                <td data-label="Screen name">@<?= strtolower($user->screen_name) ?></td>
+                <td data-label="First name"><?= ucfirst(session()->first_name) ?></td>
+                <td data-label="Last name"><?= ucfirst(session()->last_name) ?></td>
+                <td data-label="Email"><?= strtolower(session()->email_address) ?></td>
+                <td data-label="Screen name">@<?= session()->screen_name ?></td>
                 <td data-label="Photos">
                     <div style="display: flex; align-items: center; gap: 1.6rem;">
                         <?= count($photos) ?>
 
-                        <?php if (count($photos) > 0) : ?>
-                        <a href="<?= base_url('photos') ?>">View photos</a>
-                        <?php endif ?>
-
                     </div>
-
                  </td>
                 <td data-label="Create at"><?= date('j F, Y', strtotime($user->created_at)) ?></td>
             </tr>
